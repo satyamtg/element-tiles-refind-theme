@@ -1,13 +1,21 @@
 #This is the Makefile for element-tiles theme for the rEFInd bootloader
 
-#Variables
-ICONS=theme/icons/*.svg
-BACKGROUND=theme/backgrounds/dark.svg
-FONTS=theme/fonts/testfont.otf
-DESTDIR=output
+#Configuration variables
+THEMENAME=element-tiles
+THEMEVARIANT=dark
+DESTDIR=output/$(THEMENAME)
+
+#Source setup variables
+SOURCEICONS=$(wildcard theme/icons/*.svg)
+SOURCEBACKGROUND=theme/backgrounds/dark.svg
+SOURCEFONT=theme/fonts/testfont.otf
+
+#Destination setup variables
+DESTICONS=$(pathsubst ,$(DESTDIR)/icons/%.png,)
+
 
 #Recipie
-all: $(ICONS) $(BACKGROUNDS) $(FONTS)
+all: $(DESTICONS) $(DESTBACKGROUND) $(DESTFONT) $(DESTSELECTION)
 	
 clean:
-	rm -f $(DESTDIR)
+	rm -rf $(DESTDIR)
