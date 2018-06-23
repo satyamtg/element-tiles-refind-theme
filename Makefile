@@ -20,7 +20,13 @@ DESTSELECTIONBG=$(patsubst %.svg,$(DESTDIR)/selection/%.png,$(notdir $(SOURCESEL
 #Recipie
 .SECONDEXPANSION:
 
-all: $(DESTICONS)
+all: envsetup $(DESTICONS)
+
+envsetup:
+	mkdir -p $(DESTDIR)/icons
+	mkdir $(DESTDIR)/backgrounds
+	mkdir $(DESTDIR)/fonts
+	mkdir $(DESTDIR)/selection
 
 $(filter $(DESTDIR)/icons/os_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
 	scripts/mkpng.sh "$@" "$^" 128
