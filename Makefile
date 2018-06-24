@@ -15,24 +15,24 @@ endif
 
 ifeq ($(THEMEVARIANT),dark)
 SOURCEBACKGROUND=theme/backgrounds/dark.svg
-SOURCESELECTIONBG=$(wildcard theme/selection_imgs/*lightbg.svg)
+SOURCESELECTIONBG=$(wildcard theme/selection_imgs/*darkbg.svg)
 else ifeq ($(THEMEVARIANT),light)
 SOURCEBACKGROUND=theme/backgrounds/light.svg
 SOURCESELECTIONBG=$(wildcard theme/selection_imgs/*lightbg.svg)
 endif
 
-SOURCEFONTS=theme/fonts/testfont.otf
+SOURCEFONTS=$(wildcard theme/fonts/*.otf) $(wildcard theme/fonts/*.ttf)
 
 #Destination setup variables
 DESTICONS=$(patsubst %.svg,$(DESTDIR)/icons/%.png,$(notdir $(SOURCEICONS)))
 DESTBACKGROUND=$(patsubst %.svg,$(DESTDIR)/backgrounds/%.png,$(notdir $(SOURCEBACKGROUND)))
-DESTFONTS=$(patsubst %.svg,$(DESTDIR)/fonts/%.png,$(notdir $(SOURCEFONTS)))
+DESTFONTS=$(patsubst %.ttf,$(DESTDIR)/fonts/%.png,$(notdir $(SOURCEFONTS))) $(patsubst %.otf,$(DESTDIR)/fonts/%.png,$(notdir $(SOURCEFONTS)))
 DESTSELECTIONBG=$(patsubst %.svg,$(DESTDIR)/selection/%.png,$(notdir $(SOURCESELECTIONBG)))
 
 #Recipie
 .SECONDEXPANSION:
 
-all: envsetup $(DESTICONS) $(DESTSELECTIONBG)
+all: envsetup $(DESTICONS) $(DESTSELECTIONBG) $(DESTBACKGROUND) $(DESTFONTS)
 
 envsetup:
 	mkdir -p $(DESTDIR)/icons
@@ -42,25 +42,33 @@ envsetup:
 
 #Make DESTICONS
 $(filter $(DESTDIR)/icons/os_%.png $(DESTDIR)/icons/boot_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
-	scripts/mkpng.sh "$@" "$^" 256
+	scripts/mkpng "$@" "$^" 256
 	
 $(filter $(DESTDIR)/icons/tool_%.png $(DESTDIR)/icons/arrow_%.png $(DESTDIR)/icons/func_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
-	scripts/mkpng.sh "$@" "$^" 96
+	scripts/mkpng "$@" "$^" 96
 
 $(filter $(DESTDIR)/icons/vol_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
-	scripts/mkpng.sh "$@" "$^" 64
+	scripts/mkpng "$@" "$^" 64
 
 #Make DESTFONTS
+$(DESTFONTS): $$(filter %$$(basename $$(notdir $$@)).otf %$$(basename $$(notdir $$@)).ttf,$$(SOURCEFONTS))
+ifeq ($(suffix $^),.ttf)
+	scripts/mkotf $^
+	
+else
+	
+endif
+
 #Make DESTBACKGROUND
-
-
+$(DESTBACKGROUND): $(SOURCEBACKGROUND)
+	scripts/mkpng "$@" "$^" 256
 
 #MAKE DESTSELECTIONBG
 $(DESTDIR)/selection/selection_big%.png: theme/selection_imgs/selection_big%.svg
-	scripts/mkpng.sh "$@" "$^" 256
+	scripts/mkpng "$@" "$^" 256
 
 $(DESTDIR)/selection/selection_small%.png: theme/selection_imgs/selection_small%.svg
-	scripts/mkpng.sh "$@" "$^" 256
+	scripts/mkpng "$@" "$^" 256
 
 clean:
 	rm -rf $(DESTDIR)
