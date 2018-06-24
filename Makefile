@@ -4,12 +4,24 @@
 THEMENAME=element-tiles
 THEMEVARIANT=dark
 DESTDIR=output/$(THEMENAME)
+MAKEEXTRAS=true
 
 #Source setup variables
+ifeq ($(MAKEEXTRAS),true)
+SOURCEICONS=$(wildcard theme/icons/icons_stock/*.svg) $(wildcard theme/icons/icons_extras/*.svg)
+else
 SOURCEICONS=$(wildcard theme/icons/icons_stock/*.svg)
+endif
+
+ifeq ($(THEMEVARIANT),dark)
 SOURCEBACKGROUND=theme/backgrounds/dark.svg
+SOURCESELECTIONBG=$(wildcard theme/selection_imgs/*lightbg.svg)
+else ifeq ($(THEMEVARIANT),light)
+SOURCEBACKGROUND=theme/backgrounds/light.svg
+SOURCESELECTIONBG=$(wildcard theme/selection_imgs/*lightbg.svg)
+endif
+
 SOURCEFONTS=theme/fonts/testfont.otf
-SOURCESELECTIONBG=
 
 #Destination setup variables
 DESTICONS=$(patsubst %.svg,$(DESTDIR)/icons/%.png,$(notdir $(SOURCEICONS)))
@@ -20,7 +32,7 @@ DESTSELECTIONBG=$(patsubst %.svg,$(DESTDIR)/selection/%.png,$(notdir $(SOURCESEL
 #Recipie
 .SECONDEXPANSION:
 
-all: envsetup $(DESTICONS)
+all: envsetup $(DESTICONS) $(DESTSELECTIONBG)
 
 envsetup:
 	mkdir -p $(DESTDIR)/icons
@@ -28,8 +40,27 @@ envsetup:
 	mkdir $(DESTDIR)/fonts
 	mkdir $(DESTDIR)/selection
 
-$(filter $(DESTDIR)/icons/os_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
-	scripts/mkpng.sh "$@" "$^" 128
+#Make DESTICONS
+$(filter $(DESTDIR)/icons/os_%.png $(DESTDIR)/icons/boot_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
+	scripts/mkpng.sh "$@" "$^" 256
 	
+$(filter $(DESTDIR)/icons/tool_%.png $(DESTDIR)/icons/arrow_%.png $(DESTDIR)/icons/func_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
+	scripts/mkpng.sh "$@" "$^" 96
+
+$(filter $(DESTDIR)/icons/vol_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
+	scripts/mkpng.sh "$@" "$^" 64
+
+#Make DESTFONTS
+#Make DESTBACKGROUND
+
+
+
+#MAKE DESTSELECTIONBG
+$(DESTDIR)/selection/selection_big%.png: theme/selection_imgs/selection_big%.svg
+	scripts/mkpng.sh "$@" "$^" 256
+
+$(DESTDIR)/selection/selection_small%.png: theme/selection_imgs/selection_small%.svg
+	scripts/mkpng.sh "$@" "$^" 256
+
 clean:
 	rm -rf $(DESTDIR)
