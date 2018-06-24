@@ -52,12 +52,12 @@ $(filter $(DESTDIR)/icons/vol_%.png,$(DESTICONS)): $$(filter %$$(basename $$(not
 
 #Make DESTFONTS
 $(DESTFONTS): $$(filter %$$(basename $$(notdir $$@)).otf %$$(basename $$(notdir $$@)).ttf,$$(SOURCEFONTS))
-ifeq ($(suffix $^),.ttf)
-	scripts/mkotf $^
-	
-else
-	
-endif
+	@if [ "$(suffix $<)" = ".ttf" ]; then\
+		scripts/mkotf $< $(patsubst %.ttf,%.otf,$<);\
+		scripts/mkfont "$(patsubst %.ttf,%.otf,$<)" 14 -3 "$@";\
+	else\
+		scripts/mkfont "$<" 14 -3 "$@";\
+	fi
 
 #Make DESTBACKGROUND
 $(DESTBACKGROUND): $(SOURCEBACKGROUND)

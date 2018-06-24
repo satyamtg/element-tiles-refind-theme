@@ -1,2 +1,2 @@
 #!/bin/bash
-fontforge -c 'Open(hello.ttf); Generate(test.otf)'
+fontforge -lang=ff -c 'Open($1); Generate($2)' "$1" "$2"
