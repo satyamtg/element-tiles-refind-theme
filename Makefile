@@ -26,7 +26,7 @@ SOURCEFONTS=$(wildcard theme/fonts/*.otf) $(wildcard theme/fonts/*.ttf)
 #Destination setup variables
 DESTICONS=$(patsubst %.svg,$(DESTDIR)/icons/%.png,$(notdir $(SOURCEICONS)))
 DESTBACKGROUND=$(patsubst %.svg,$(DESTDIR)/backgrounds/%.png,$(notdir $(SOURCEBACKGROUND)))
-DESTFONTS=$(patsubst %.ttf,$(DESTDIR)/fonts/%.png,$(notdir $(SOURCEFONTS))) $(patsubst %.otf,$(DESTDIR)/fonts/%.png,$(notdir $(SOURCEFONTS)))
+DESTFONTS=$(patsubst %.ttf,$(DESTDIR)/fonts/%.png,$(patsubst %.otf,$(DESTDIR)/fonts/%.png,$(notdir $(SOURCEFONTS))))
 DESTSELECTIONBG=$(patsubst %.svg,$(DESTDIR)/selection/%.png,$(notdir $(SOURCESELECTIONBG)))
 
 #Recipie
@@ -52,12 +52,7 @@ $(filter $(DESTDIR)/icons/vol_%.png,$(DESTICONS)): $$(filter %$$(basename $$(not
 
 #Make DESTFONTS
 $(DESTFONTS): $$(filter %$$(basename $$(notdir $$@)).otf %$$(basename $$(notdir $$@)).ttf,$$(SOURCEFONTS))
-	@if [ "$(suffix $<)" = ".ttf" ]; then\
-		scripts/mkotf $< $(patsubst %.ttf,%.otf,$<);\
-		scripts/mkfont "$(patsubst %.ttf,%.otf,$<)" 14 -3 "$@";\
-	else\
-		scripts/mkfont "$<" 14 -3 "$@";\
-	fi
+	scripts/mkfont "$<" 14 -3 "$@"
 
 #Make DESTBACKGROUND
 $(DESTBACKGROUND): $(SOURCEBACKGROUND)
