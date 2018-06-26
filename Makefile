@@ -3,7 +3,7 @@
 #Configuration variables
 THEMENAME=element-tiles
 AUTHOR=satyamtg
-THEMEVARIANT=dark
+THEMEVARIANT=light
 DESTDIR=output/$(THEMENAME)
 MAKEEXTRAS=true
 BIGICONSIZE=256
@@ -79,7 +79,7 @@ $(DESTDIR)/selection/selection_big%.png: theme/selection_imgs/selection_big%.svg
 	scripts/mkpng "$@" "$^" $(shell echo 9*$(BIGICONSIZE)/8 | bc)
 
 $(DESTDIR)/selection/selection_small%.png: theme/selection_imgs/selection_small%.svg
-	scripts/mkpng "$@" "$^" $(shell echo 3*$(SMALLICONSIZE)/4 | bc)
+	scripts/mkpng "$@" "$^" $(shell echo 4*$(SMALLICONSIZE)/3 | bc)
 
 clean:
 	rm -rf $(DESTDIR)
