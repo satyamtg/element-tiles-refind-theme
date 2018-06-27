@@ -3,7 +3,7 @@
 #Configuration variables
 THEMENAME=element-tiles
 AUTHOR=satyamtg
-THEMEVARIANT=light
+THEMEVARIANT=dark
 DESTDIR=output/$(THEMENAME)
 MAKEEXTRAS=true
 BIGICONSIZE=256
@@ -52,9 +52,9 @@ all: envsetup $(DESTICONS) $(DESTSELECTIONBG) $(DESTBACKGROUND) $(DESTFONTS)
 
 envsetup:
 	mkdir -p $(DESTDIR)/icons
-	mkdir $(DESTDIR)/backgrounds
-	mkdir $(DESTDIR)/fonts
-	mkdir $(DESTDIR)/selection
+	mkdir -p $(DESTDIR)/backgrounds
+	mkdir -p $(DESTDIR)/fonts
+	mkdir -p $(DESTDIR)/selection
 
 #Make DESTICONS
 $(filter $(DESTDIR)/icons/os_%.png $(DESTDIR)/icons/boot_%.png,$(DESTICONS)): $$(filter %$$(basename $$(notdir $$@)).svg,$$(SOURCEICONS))
@@ -81,5 +81,28 @@ $(DESTDIR)/selection/selection_big%.png: theme/selection_imgs/selection_big%.svg
 $(DESTDIR)/selection/selection_small%.png: theme/selection_imgs/selection_small%.svg
 	scripts/mkpng "$@" "$^" $(shell echo 4*$(SMALLICONSIZE)/3 | bc)
 
-clean:
+install: all
+ifneq ($(wildcard /boot/efi/EFI/refind/.),)
+	@echo "Found rEFInd"
+	mkdir -p /boot/efi/EFI/refind/themes/$(THEMENAME)
+	cp -R $(DESTDIR)/. /boot/efi/EFI/refind/themes/$(THEMENAME)/
+	@echo 'include themes/$(THEMENAME)/theme.conf' >> /boot/efi/EFI/refind/refind.conf
+	@echo "$(THEMENAME) successfully installed."
+else
+	@echo "Could not locate rEFInd bootloader."
+	@echo "This can be due to the ESP not mounted at /boot/efi."
+	@echo "The theme has been made but not installed. Please locate the rEFInd boot manager and manually install the theme."
+endif
+
+build: all
+	@echo "Creating install.sh"
+	cp -R theme/configuration/install.sh $(DESTDIR)
+	sed -i 's://THEMENAME//:$(THEMENAME):g' $(DESTDIR)/install.sh
+	@echo "Creating zip archive"
+	(cd output; zip -r $(THEMENAME)-$(THEMEVARIANT).zip $(THEMENAME))
+	@echo "Done zipping."
 	rm -rf $(DESTDIR)
+	@echo "$(THEMENAME) successfully packaged as a zip"
+
+clean:
+	rm -rf output
