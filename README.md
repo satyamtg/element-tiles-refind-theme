@@ -1,5 +1,6 @@
 # Element-Tiles
-
+![Dark](screenshots/dark.png)
+![Light](screenshots/light.png)
 Element-Tiles is a unique and good looking flat theme for the rEFInd bootloader. It is inspired by the periodic table and metro design and the colors are mostly taken from material design, giving it a fresh new look. It even comes in two variants - dark and light.
 
 ## Getting started
@@ -29,6 +30,12 @@ Clone this repository to your preferred directory.
 ```
 cd ~/your/preferred/directory
 git clone https://github.com/satyamtg/element-tiles-refind-theme.git
+```
+or
+
+```
+cd ~/your/preferred/directory
+git clone https://gitlab.com/satyamtg/element-tiles-refind-theme.git
 ```
 
 ##### Building the theme
