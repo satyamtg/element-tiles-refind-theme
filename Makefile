@@ -3,7 +3,7 @@
 #Configuration variables
 THEMENAME=element-tiles
 AUTHOR=satyamtg
-THEMEVARIANT=dark
+THEMEVARIANT=light
 DESTDIR=output/$(THEMENAME)
 MAKEEXTRAS=true
 BIGICONSIZE=256

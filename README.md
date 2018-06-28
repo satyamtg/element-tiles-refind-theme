@@ -66,6 +66,6 @@ This theme is compatible with rEFInd v0.11.0 and tested on 0.11.2 and a system r
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-The font used is Roboto Mono licensed under the Apache License 2.0
 
+The font used is Roboto Mono licensed under the Apache License 2.0 - see the [LICENSE](theme/fonts/LICENSE.txt) file for details
 
